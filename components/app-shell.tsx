@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { PanelRightOpen, Music, Sparkles, Library, Upload, FlaskConical } from "lucide-react";
+import { BookOpen, PanelRightOpen, Music, Sparkles, Library, Upload, FlaskConical } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,12 +14,14 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { About } from "@/components/about";
 
 const TABS = [
   { value: "ask", label: "Ask", icon: Sparkles, blurb: "Ask anything across the corpus. Answers cite passages from reviews and interviews." },
   { value: "library", label: "Library", icon: Library, blurb: "Browse, filter, and inspect every document and chunk you've ingested." },
-  { value: "upload", label: "Upload", icon: Upload, blurb: "Drop in reviews, transcripts, or text. We chunk, embed, and index." },
+  { value: "ingest", label: "Ingest", icon: Upload, blurb: "Drop in reviews, transcripts, or text. We chunk, embed, and index." },
   { value: "evals", label: "Evals", icon: FlaskConical, blurb: "Run retrieval and answer-quality evals against a held-out question set." },
+  { value: "about", label: "About", icon: BookOpen, blurb: "How this all works." },
 ] as const;
 
 export function AppShell() {
@@ -61,7 +63,7 @@ export function AppShell() {
             ))}
           </TabsList>
 
-          {TABS.map(({ value, label, blurb }) => (
+          {TABS.filter(({ value }) => value !== "about").map(({ value, label, blurb }) => (
             <TabsContent key={value} value={value} className="mt-4">
               <Card>
                 <CardHeader>
@@ -74,6 +76,10 @@ export function AppShell() {
               </Card>
             </TabsContent>
           ))}
+
+          <TabsContent value="about" className="mt-4">
+            <About />
+          </TabsContent>
         </Tabs>
       </main>
 
