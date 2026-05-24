@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { BookOpen, PanelRightOpen, Music, Sparkles, Library, Upload, FlaskConical } from "lucide-react";
+import { BookOpen, PanelRightOpen, Music, Sparkles, Library as LibraryIcon, Upload, FlaskConical } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -15,10 +14,14 @@ import {
 } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { About } from "@/components/about";
+import { Ingest } from "@/components/ingest";
+import { IngestInspector } from "@/components/ingest-inspector";
+import { Library } from "@/components/library";
+import { IngestProvider } from "@/lib/ingest/context";
 
 const TABS = [
   { value: "ask", label: "Ask", icon: Sparkles, blurb: "Ask anything across the corpus. Answers cite passages from reviews and interviews." },
-  { value: "library", label: "Library", icon: Library, blurb: "Browse, filter, and inspect every document and chunk you've ingested." },
+  { value: "library", label: "Library", icon: LibraryIcon, blurb: "Browse, filter, and inspect every document and chunk you've ingested." },
   { value: "ingest", label: "Ingest", icon: Upload, blurb: "Drop in reviews, transcripts, or text. We chunk, embed, and index." },
   { value: "evals", label: "Evals", icon: FlaskConical, blurb: "Run retrieval and answer-quality evals against a held-out question set." },
   { value: "about", label: "About", icon: BookOpen, blurb: "How this all works." },
@@ -28,6 +31,7 @@ export function AppShell() {
   const [inspectorOpen, setInspectorOpen] = useState(false);
 
   return (
+    <IngestProvider>
     <div className="flex min-h-screen flex-1 flex-col">
       <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:px-6">
         <div className="flex items-center gap-2">
@@ -36,9 +40,6 @@ export function AppShell() {
           </span>
           <span className="text-base font-semibold tracking-tight">Pitchwork</span>
         </div>
-        <Badge variant="secondary" className="font-mono text-xs">
-          142 reviews
-        </Badge>
         <div className="ml-auto flex items-center gap-2">
           <Button
             variant="outline"
@@ -63,7 +64,7 @@ export function AppShell() {
             ))}
           </TabsList>
 
-          {TABS.filter(({ value }) => value !== "about").map(({ value, label, blurb }) => (
+          {TABS.filter(({ value }) => value !== "about" && value !== "ingest" && value !== "library").map(({ value, label, blurb }) => (
             <TabsContent key={value} value={value} className="mt-4">
               <Card>
                 <CardHeader>
@@ -77,6 +78,14 @@ export function AppShell() {
             </TabsContent>
           ))}
 
+          <TabsContent value="ingest" className="mt-4">
+            <Ingest />
+          </TabsContent>
+
+          <TabsContent value="library" className="mt-4">
+            <Library />
+          </TabsContent>
+
           <TabsContent value="about" className="mt-4">
             <About />
           </TabsContent>
@@ -88,16 +97,13 @@ export function AppShell() {
           <SheetHeader>
             <SheetTitle>Inspector</SheetTitle>
             <SheetDescription>
-              Retrieval traces, sources, and debug info will appear here once you run a query.
+              Pipeline traces for the active ingest job.
             </SheetDescription>
           </SheetHeader>
-          <div className="flex flex-1 items-center justify-center px-6 pb-6 text-center">
-            <p className="text-sm text-muted-foreground">
-              Nothing to inspect yet.
-            </p>
-          </div>
+          <IngestInspector />
         </SheetContent>
       </Sheet>
     </div>
+    </IngestProvider>
   );
 }
