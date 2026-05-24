@@ -18,8 +18,6 @@ export const metadata: Metadata = {
   description: "Ask anything across a corpus of music writing.",
 };
 
-const themeScript = `(function(){try{var d=document.documentElement;var m=window.matchMedia('(prefers-color-scheme: dark)');var apply=function(e){d.classList.toggle('dark',e.matches)};apply(m);m.addEventListener('change',apply)}catch(e){}})()`;
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -29,11 +27,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-      suppressHydrationWarning
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <TooltipProvider>{children}</TooltipProvider>
       </body>
